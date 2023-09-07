@@ -73,10 +73,10 @@ async fn client(client_id: &usize,
             let mut hist = hist.lock().unwrap();
             *hist += response_time as u64;
 
-            debug!("Client {} on {:?} received {:?}, latency: {} ms", client_id, thread::current().id(), response, response_time);
+            info!("Client {} on {:?} received {:?}, latency: {} ms", client_id, thread::current().id(), response, response_time);
         },
         Err (error) => {
-            error!("Error: {:?}", error);
+            error!("Client {} on {:?}: Error: {:?}", client_id, thread::current().id(), error);
         }
 
     };
