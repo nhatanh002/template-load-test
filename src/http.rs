@@ -23,16 +23,12 @@ use std::time::Duration;
 #[tokio::main]
 async fn main() -> Result<(), GooseError> {
     GooseAttack::initialize()?
-        // In this example, we only create a single scenario, named "WebsiteUser".
         .register_scenario(
-            scenario!("WebsiteUser")
-                // After each transactions runs, sleep randomly from 5 to 15 seconds.
+            scenario!("TypicalInteraction")
                 .set_wait_time(Duration::from_secs(0), Duration::from_secs(0))?
-                // This transaction only runs one time when the user first starts.
-                // .register_transaction(transaction!(website_login).set_on_start())
-                // These next two transactions run repeatedly as long as the load test is running.
-                .register_transaction(transaction!(website_index))
-                // .register_transaction(transaction!(website_about)),
+                // Login - TBD
+                // .register_transaction(transaction!(login).set_on_start())
+                .register_transaction(transaction!(get_a_cat))
         )
         .execute()
         .await?;
@@ -40,10 +36,7 @@ async fn main() -> Result<(), GooseError> {
     Ok(())
 }
 
-/// Demonstrates how to log in when a user starts. We flag this transaction as an
-/// on_start transaction when registering it above. This means it only runs one time
-/// per user, when the user thread first starts.
-async fn website_login(user: &mut GooseUser) -> TransactionResult {
+async fn login(user: &mut GooseUser) -> TransactionResult {
     let params = [("username", "test_user"), ("password", "")];
     let _goose = user.post_form("/login", &params).await?;
 
@@ -51,15 +44,9 @@ async fn website_login(user: &mut GooseUser) -> TransactionResult {
 }
 
 /// A very simple transaction
-async fn website_index(user: &mut GooseUser) -> TransactionResult {
+async fn get_a_cat(user: &mut GooseUser) -> TransactionResult {
     let _goose = user.get("/cats/dd77eef2-7c71-4ccd-9bd2-97f445164ff6").await?;
-
-    Ok(())
-}
-
-/// A very simple transaction that simply loads the about page.
-async fn website_about(user: &mut GooseUser) -> TransactionResult {
-    let _goose = user.get("/about/").await?;
+    // let _goose = user.get("/cats/ping").await?;
 
     Ok(())
 }

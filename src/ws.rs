@@ -66,7 +66,7 @@ async fn client(client_id: &usize,
             let start_time = Instant::now();
             // ws_stream.send(Message::text("PING")).await.unwrap ();
             // let response = ws_stream.next().await.unwrap ();
-            let response = interact(&mut ws_stream).await;
+            let response = ws_interaction(&mut ws_stream).await;
             let response_time = start_time.elapsed().as_millis();
 
             // threads should not fail while holding the lock
@@ -82,7 +82,8 @@ async fn client(client_id: &usize,
     };
 }
 
-async fn interact(ws_stream : &mut WebSocketStream<ConnectStream>) -> Result<Message, async_tungstenite::tungstenite::Error> {
+// TODO: adapt websocket interaction for Goose lib for a more uniform load test suite
+async fn ws_interaction(ws_stream : &mut WebSocketStream<ConnectStream>) -> Result<Message, async_tungstenite::tungstenite::Error> {
             ws_stream.send(Message::text("ping")).await.unwrap();
             ws_stream.next().await.unwrap()
 }
